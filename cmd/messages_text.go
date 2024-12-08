@@ -139,7 +139,11 @@ func (mt *MessagesText) createHeader(w io.Writer, m discord.Message, isReply boo
 		fmt.Fprintf(mt, "[::d]%s", mt.cfg.Theme.MessagesText.ReplyIndicator)
 	}
 
-	fmt.Fprintf(w, "[%s]%s[-:-:-] ", mt.cfg.Theme.MessagesText.AuthorColor, m.Author.Username)
+	if m.Author.Username == mt.cfg.Username {
+		fmt.Fprintf(w, "[%s]%s[-:-:-] ", mt.cfg.Theme.MessagesText.AuthorColor, m.Author.Username)
+	} else {
+		fmt.Fprintf(w, "[%s]%s[-:-:-] ", mt.cfg.Theme.MessagesText.OtherColor, m.Author.Username)
+	}
 }
 
 func (mt *MessagesText) createBody(w io.Writer, m discord.Message, isReply bool) {
@@ -215,6 +219,9 @@ func (mt *MessagesText) onInputCapture(event *tcell.EventKey) *tcell.EventKey {
 	case mt.cfg.Keys.MessagesText.Delete:
 		mt.delete()
 		return nil
+	case mt.cfg.Keys.MessagesText.ToggleHighlights:
+		mt.Highlight()
+		return nil
 	}
 
 	return nil
@@ -242,6 +249,7 @@ func (mt *MessagesText) _select(name string) {
 			if messageIdx < len(ms)-1 {
 				mt.selectedMessageID = ms[messageIdx+1].ID
 			} else {
+				mt.Highlight()
 				return
 			}
 		}
@@ -253,6 +261,7 @@ func (mt *MessagesText) _select(name string) {
 			if messageIdx > 0 {
 				mt.selectedMessageID = ms[messageIdx-1].ID
 			} else {
+				mt.Highlight()
 				return
 			}
 		}

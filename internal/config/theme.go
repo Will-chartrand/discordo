@@ -27,6 +27,7 @@ type (
 		ReplyIndicator string `toml:"reply_indicator"`
 
 		AuthorColor     string `toml:"author_color"`
+		OtherColor      string `toml:"other_color"`
 		ContentColor    string `toml:"content_color"`
 		EmojiColor      string `toml:"emoji_color"`
 		LinkColor       string `toml:"link_color"`

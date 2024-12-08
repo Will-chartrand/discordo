@@ -25,10 +25,11 @@ type (
 	}
 
 	MessagesTextKeys struct {
-		SelectReply  string `toml:"select_reply"`
-		SelectPin    string `toml:"select_pin"`
-		Reply        string `toml:"reply"`
-		ReplyMention string `toml:"reply_mention"`
+		SelectReply      string `toml:"select_reply"`
+		SelectPin        string `toml:"select_pin"`
+		Reply            string `toml:"reply"`
+		ReplyMention     string `toml:"reply_mention"`
+		ToggleHighlights string `toml:"toggle_highlights"`
 
 		Delete string `toml:"delete"`
 		Yank   string `toml:"yank"`

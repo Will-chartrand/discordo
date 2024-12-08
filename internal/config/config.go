@@ -22,6 +22,8 @@ type Config struct {
 
 	ShowAttachmentLinks bool `toml:"show_attachment_links"`
 
+	Username string `toml:"username`
+
 	Keys  Keys  `toml:"keys"`
 	Theme Theme `toml:"theme"`
 }
@@ -37,6 +39,8 @@ func defaultConfig() *Config {
 		TimestampsFormat: time.Kitchen,
 
 		ShowAttachmentLinks: true,
+
+		Username: "charidian",
 
 		Keys:  defaultKeys(),
 		Theme: defaultTheme(),

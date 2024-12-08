@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"log/slog"
+	"os/exec"
 	"runtime"
 	"slices"
 
@@ -94,6 +95,20 @@ func (s *State) onReady(r *gateway.ReadyEvent) {
 func (s *State) onMessageCreate(m *gateway.MessageCreateEvent) {
 	if layout.guildsTree.selectedChannelID.IsValid() && layout.guildsTree.selectedChannelID == m.ChannelID {
 		layout.messagesText.createMessage(m.Message)
+
+		focusedWindowName, ferr := exec.Command("xdotool", "getwindowfocus", "getwindowname").Output()
+		if ferr != nil {
+			slog.Error("failed to get focused window", "err", ferr)
+		}
+
+		if m.Author.Username == s.cfg.Username && string(focusedWindowName) != "discordo" {
+			cmd := exec.Command("notify-send", "-t", "2000", m.Author.Username, m.Content)
+			err := cmd.Run()
+			if err != nil {
+				slog.Error("failed to send notify", "err", err)
+			}
+		}
+
 	}
 }
 

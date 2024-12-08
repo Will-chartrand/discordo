@@ -216,6 +216,9 @@ func (gt *GuildsTree) onSelected(n *tview.TreeNode) {
 			return
 		}
 
+		// Get rid of first three empty channels :(
+		cs = cs[3:]
+
 		for _, c := range cs {
 			gt.createChannelNode(n, c)
 		}
