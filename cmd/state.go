@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"runtime"
 	"slices"
+	"strings"
 
 	"github.com/ayn2op/discordo/internal/config"
 	"github.com/diamondburned/arikawa/v3/api"
@@ -101,7 +102,7 @@ func (s *State) onMessageCreate(m *gateway.MessageCreateEvent) {
 			slog.Error("failed to get focused window", "err", ferr)
 		}
 
-		if m.Author.Username == s.cfg.Username && string(focusedWindowName) != "discordo" {
+		if m.Author.Username != s.cfg.Username && strings.TrimSpace(string(focusedWindowName)) != "discordo" {
 			cmd := exec.Command("notify-send", "-t", "2000", m.Author.Username, m.Content)
 			err := cmd.Run()
 			if err != nil {
