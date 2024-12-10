@@ -54,7 +54,8 @@ func defaultTheme() Theme {
 		MessagesText: MessagesTextTheme{
 			ReplyIndicator: string(tview.BoxDrawingsLightArcDownAndRight) + " ",
 
-			AuthorColor:     "aqua",
+			AuthorColor:     "green",
+			OtherColor:      "aqua",
 			ContentColor:    tview.Styles.PrimaryTextColor.String(),
 			EmojiColor:      "green",
 			LinkColor:       "blue",
