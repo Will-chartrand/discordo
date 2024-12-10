@@ -322,6 +322,45 @@ func (mt *MessagesText) yank() {
 	}
 }
 
+func (mt *MessagesText) xdgopen(url string) {
+	toBeOpened := url
+	fileType := ""
+
+	if strings.Contains(url, ".jpg?") {
+		fileType = "jpg"
+	} else if strings.Contains(url, ".png?") {
+		fileType = "png"
+	}
+
+	if fileType != "" {
+
+		date, err := exec.Command("date", "+%Y-%m-%d_%H:%M:%S").Output()
+		if err != nil {
+			slog.Error("failed to get date", "err", err)
+		}
+
+		absFilePath := mt.cfg.AttachmentPath + strings.TrimSpace(string(date)) + "." + fileType
+		cmd := exec.Command("wget", "-O", absFilePath, url)
+		err = cmd.Run()
+		if err != nil {
+			slog.Error("failed to set file path", "err", err)
+		}
+
+		toBeOpened = absFilePath
+
+		cmd = exec.Command("notify-send", "Opening", toBeOpened)
+		err = cmd.Run()
+		if err != nil {
+			slog.Error("failed to send notify", "err", err)
+		}
+
+	}
+
+	if err := open.Start(toBeOpened); err != nil {
+		slog.Error("failed to open URL", "err", err, "url", toBeOpened)
+	}
+}
+
 func (mt *MessagesText) open() {
 	msg, err := mt.getSelectedMessage()
 	if err != nil {
@@ -330,49 +369,17 @@ func (mt *MessagesText) open() {
 	}
 
 	attachments := msg.Attachments
+
+	if len(attachments) == 0 && strings.Contains(msg.Content, "https://") {
+		mt.xdgopen(msg.Content)
+	}
+
 	if len(attachments) == 0 {
 		return
 	}
 
 	for _, a := range attachments {
-		go func() {
-			toBeOpened := a.URL
-			fileType := ""
-
-			if strings.Contains(a.URL, ".jpg?") {
-				fileType = "jpg"
-			} else if strings.Contains(a.URL, ".png?") {
-				fileType = "png"
-			}
-
-			if fileType != "" {
-
-				date, err := exec.Command("date", "+%Y-%m-%d_%H:%M:%S").Output()
-				if err != nil {
-					slog.Error("failed to get date", "err", err)
-				}
-
-				absFilePath := mt.cfg.AttachmentPath + strings.TrimSpace(string(date)) + "." + fileType
-				cmd := exec.Command("wget", "-O", absFilePath, a.URL)
-				err = cmd.Run()
-				if err != nil {
-					slog.Error("failed to set file path", "err", err)
-				}
-
-				toBeOpened = absFilePath
-
-				cmd = exec.Command("notify-send", "Opening", toBeOpened)
-				err = cmd.Run()
-				if err != nil {
-					slog.Error("failed to send notify", "err", err)
-				}
-
-			}
-
-			if err := open.Start(toBeOpened); err != nil {
-				slog.Error("failed to open URL", "err", err, "url", toBeOpened)
-			}
-		}()
+		mt.xdgopen(a.URL)
 	}
 }
 
