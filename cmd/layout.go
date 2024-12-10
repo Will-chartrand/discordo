@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log/slog"
+	"os/exec"
 
 	"github.com/ayn2op/discordo/internal/config"
 	"github.com/gdamore/tcell/v2"
@@ -96,6 +97,11 @@ func (l *Layout) onAppInputCapture(event *tcell.EventKey) *tcell.EventKey {
 }
 
 func (l *Layout) onFlexInputCapture(event *tcell.EventKey) *tcell.EventKey {
+	cmd := exec.Command("notify-send", event.Name())
+	err := cmd.Run()
+	if err != nil {
+		slog.Error("failed to send notify", "err", err)
+	}
 	switch event.Name() {
 	case l.cfg.Keys.FocusGuildsTree:
 		l.app.SetFocus(l.guildsTree)

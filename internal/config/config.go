@@ -22,7 +22,8 @@ type Config struct {
 
 	ShowAttachmentLinks bool `toml:"show_attachment_links"`
 
-	Username string `toml:"username`
+	Username       string `toml:"username"`
+	AttachmentPath string `toml:"attachmentpath"`
 
 	Keys  Keys  `toml:"keys"`
 	Theme Theme `toml:"theme"`
@@ -40,7 +41,8 @@ func defaultConfig() *Config {
 
 		ShowAttachmentLinks: true,
 
-		Username: "charidian",
+		Username:       "charidian",
+		AttachmentPath: "/home/willc/Pictures/discordo/",
 
 		Keys:  defaultKeys(),
 		Theme: defaultTheme(),

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"os/exec"
 	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/atotto/clipboard"
@@ -334,8 +336,41 @@ func (mt *MessagesText) open() {
 
 	for _, a := range attachments {
 		go func() {
-			if err := open.Start(a.URL); err != nil {
-				slog.Error("failed to open URL", "err", err, "url", a.URL)
+			toBeOpened := a.URL
+			fileType := ""
+
+			if strings.Contains(a.URL, ".jpg?") {
+				fileType = "jpg"
+			} else if strings.Contains(a.URL, ".png?") {
+				fileType = "png"
+			}
+
+			if fileType != "" {
+
+				date, err := exec.Command("date", "+%Y-%m-%d_%H:%M:%S").Output()
+				if err != nil {
+					slog.Error("failed to get date", "err", err)
+				}
+
+				absFilePath := mt.cfg.AttachmentPath + strings.TrimSpace(string(date)) + "." + fileType
+				cmd := exec.Command("wget", "-O", absFilePath, a.URL)
+				err = cmd.Run()
+				if err != nil {
+					slog.Error("failed to set file path", "err", err)
+				}
+
+				toBeOpened = absFilePath
+
+				cmd = exec.Command("notify-send", "Opening", toBeOpened)
+				err = cmd.Run()
+				if err != nil {
+					slog.Error("failed to send notify", "err", err)
+				}
+
+			}
+
+			if err := open.Start(toBeOpened); err != nil {
+				slog.Error("failed to open URL", "err", err, "url", toBeOpened)
 			}
 		}()
 	}
