@@ -117,7 +117,7 @@ func (mi *MessageInput) send() {
 }
 
 func (mi *MessageInput) editor() {
-	e := mi.cfg.Editor
+	e := "nvim"
 	if e == "default" {
 		e = os.Getenv("EDITOR")
 	}

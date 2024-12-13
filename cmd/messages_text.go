@@ -326,9 +326,9 @@ func (mt *MessagesText) xdgopen(url string) {
 	toBeOpened := url
 	fileType := ""
 
-	if strings.Contains(url, ".jpg?") {
+	if strings.Contains(url, ".jpg") {
 		fileType = "jpg"
-	} else if strings.Contains(url, ".png?") {
+	} else if strings.Contains(url, ".png") {
 		fileType = "png"
 	}
 
